@@ -13,12 +13,13 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sdc";
-  boot.kernelParams = [ "default_hugepagesz=1GB" "hugepagesz=1GB" "hugepages=32" "isolcpus=1-3,9-11" ];
+  boot.kernelParams = [ "intel_iommu=pt default_hugepagesz=1GB" "hugepagesz=1GB" "hugepages=32" "isolcpus=6-7" ];
 
   # Docker support
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "devicemapper";
-  virtualisation.docker.extraOptions = "--bridge=br0";
+  virtualisation.docker.extraOptions = 
+   "--storage-opt dm.datadev=/dev/vg-docker/data --storage-opt dm.metadatadev=/dev/vg-docker/metadata --bridge=br0";
   # https://github.com/NixOS/nixpkgs/issues/11478
   virtualisation.docker.socketActivation = true;
 
@@ -48,7 +49,9 @@
     # Docker
     docker
     # Others
-    htop pciutils
+    htop pciutils tcpdump
+    # for qemu:
+    pkgconfig zlib qemu
   ];
 
   # List services that you want to enable:
